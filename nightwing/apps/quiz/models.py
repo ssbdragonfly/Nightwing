@@ -12,7 +12,12 @@ class Quiz(models.Model):
 
 class MultipleChoiceQuestion(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
-    question = models.TextField()
+    question = models.TextField(max_length=200, default="")   
+    option_a = models.CharField(max_length=200, default="")
+    option_b = models.CharField(max_length=200, default="")
+    option_c = models.CharField(max_length=200, default="")
+    option_d = models.CharField(max_length=200, default="")
+    correct_option = models.CharField(max_length=1, choices=[('A', 'Option A'), ('B', 'Option B'), ('C', 'Option C'), ('D', 'Option D')], default="A")
 
     def __str__(self):
         return self.question

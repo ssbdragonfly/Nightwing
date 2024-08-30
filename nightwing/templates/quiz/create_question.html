@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1>Create Question for {{ quiz.title }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="id_question">Question:</label>
+        {{ form.question }}
+    </div>
+    <div>
+        <label for="id_option_a">Option A:</label>
+        {{ form.option_a }}
+    </div>
+    <div>
+        <label for="id_option_b">Option B:</label>
+        {{ form.option_b }}
+    </div>
+    <div>
+        <label for="id_option_c">Option C:</label>
+        {{ form.option_c }}
+    </div>
+    <div>
+        <label for="id_option_d">Option D:</label>
+        {{ form.option_d }}
+    </div>
+    <div>
+        <label for="id_correct_option">Correct Option:</label>
+        <select name="correct_option" id="id_correct_option">
+            <option value="A">Option A</option>
+            <option value="B">Option B</option>
+            <option value="C">Option C</option>
+            <option value="D">Option D</option>
+        </select>
+    </div>
+    <button type="submit">Create Question</button>
+</form>
+{% endblock %}
+

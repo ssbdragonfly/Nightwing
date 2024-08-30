@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1>{{ quiz.title }}</h1>
+<p>{{ quiz.description }}</p>
+
+<h2>Questions</h2>
+<ul>
+    {% for question in questions %}
+        <li>{{ question.question }}</li>
+        <ul>
+            <li>Option A: {{ question.option_a }}</li>
+            <li>Option B: {{ question.option_b }}</li>
+            <li>Option C: {{ question.option_c }}</li>
+            <li>Option D: {{ question.option_d }}</li>
+        </ul>
+    {% empty %}
+        <li>No questions available for this quiz.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

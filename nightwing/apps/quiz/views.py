@@ -36,3 +36,10 @@ def create_question_view(request, quiz_id):
     else:
         form = MultipleChoiceQuestionForm()
     return render(request, "quiz/create_question.html", {"form": form})
+
+
+@login_required
+def view_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    questions = quiz.questions.all()  
+    return render(request, "quiz/view_quiz.html", {"quiz": quiz, "questions": questions})

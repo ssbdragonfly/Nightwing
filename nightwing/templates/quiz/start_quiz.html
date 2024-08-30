@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+<h2>Join {{ quiz.name | title }}!</h2>
+
+<p>
+Enter the join code:
+<strong>{{ quiz.join_code }}</strong>
+</p>
+{% endblock %}

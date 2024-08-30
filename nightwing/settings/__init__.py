@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'nightwing.apps.auth',
     'nightwing.apps.dashboard',
+    'nightwing.apps.quiz',
 ]
 
 MIDDLEWARE = [

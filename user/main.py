@@ -1,3 +1,4 @@
+import functools
 import traceback
 from collections.abc import Callable
 from typing import ParamSpec, TypeVar
@@ -9,11 +10,17 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def pcall(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs):
-    try:
-        func(*args, **kwargs)
-    except Exception:  # noqa: BLE001
-        traceback.print_exc()
+def pcall(func: Callable[P, object]) -> Callable[P, None]:
+    """Call a function, suppressing all errors."""
+
+    @functools.wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> None:
+        try:
+            func(*args, **kwargs)
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+
+    return wrapper
 
 
 class App(ctk.CTk):
@@ -37,6 +44,7 @@ class App(ctk.CTk):
         self.entry.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
         self.entry.bind("<Return>", lambda event: self.send_code(self.entry.get()))
 
+    @pcall
     def send_code(self, code: str):
         response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{code}")
         jsonified = response.json()

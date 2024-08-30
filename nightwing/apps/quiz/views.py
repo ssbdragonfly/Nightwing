@@ -40,7 +40,7 @@ def create_question_view(request, quiz_id):
             return redirect("quiz:index", args=[quiz.id])
     else:
         form = MultipleChoiceQuestionForm()
-    return render(request, "quiz/create_question.html", {"form": form})
+    return render(request, "quiz/create_question.html", {"form": form, "quiz": quiz})
 
 
 @login_required

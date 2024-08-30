@@ -7,3 +7,86 @@ requires-python = ">=3.11"
 dependencies = [
     "django>=5.1",
 ]
+
+[tool.uv]
+dev-dependencies = [
+    "pre-commit>=3.8.0",
+]
+
+[tool.ruff]
+extend-exclude = [
+  ".github",
+  ".env",
+  "env",
+  "secret",
+  "media",
+  "migrations",
+]
+
+fix = true
+show-fixes = false
+
+line-length = 100
+
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    # flake8-bugbear
+    "B",
+    # flake8-blind-except
+    "BLE",
+    # flake8-comprehensions
+    "C4",
+    # pydocstyle
+    "D",
+    # flake8-django
+    "DJ",
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # flake8-boolean-trap
+    "FBT",
+    # isort
+    "I",
+    # flake8-no-pep420
+    "INP",
+    # pep8-naming
+    "N",
+    # Pylint
+    "PL",
+    # pygrep hooks
+    "PGH",
+    # ruff
+    "RUF",
+    # pyupgrade
+    "UP",
+]
+ignore = [
+  # mutable class attrs annotated as typing.ClassVar
+  "RUF012",
+  # missing docstring
+  "D1",
+  # as recommended by https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+  "E111",
+  "E114",
+  "E117",
+  "E501",
+  "D206",
+  "D300",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.codespell]
+write-changes = true
+# this has to be a string of the form a,b,c
+# ignore-words-list = ""
+# ignore comments like: # codespell: ignore
+ignore-regex=".+# *codespell: *ignore.*"

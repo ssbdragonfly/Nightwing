@@ -1,4 +1,19 @@
+import traceback
+from collections.abc import Callable
+from typing import ParamSpec, TypeVar
+
 import customtkinter as ctk
+import requests
+
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def pcall(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs):
+    try:
+        func(*args, **kwargs)
+    except Exception:  # noqa: BLE001
+        traceback.print_exc()
 
 
 class App(ctk.CTk):
@@ -20,11 +35,12 @@ class App(ctk.CTk):
             font=("Calibri", int(0.03 * self.height_1)),
         )
         self.entry.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
-        self.entry.bind("<Return>", lambda event: self.send_code(self.entry))
+        self.entry.bind("<Return>", lambda event: self.send_code(self.entry.get()))
 
-    def send_code(self, code):
-        # Placeholder for actual talking to website
-        print(code.get())
+    def send_code(self, code: str):
+        response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{code}")
+        jsonified = response.json()
+        self.quiz_id = jsonified["quiz_id"]
         self.clear_screen()
 
     def clear_screen(self):

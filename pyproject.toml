@@ -5,7 +5,9 @@ description = "Keep employees engaged during meetings"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "customtkinter>=5.2.2",
     "django>=5.1",
+    "requests>=2.32.3",
 ]
 
 [tool.uv]

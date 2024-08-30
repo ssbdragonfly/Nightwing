@@ -12,7 +12,7 @@ from .models import Quiz
 @login_required
 def quiz_index(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    questions = quiz.questions.all()  
+    questions = quiz.questions.all()
     return render(request, "quiz/view_quiz.html", {"quiz": quiz, "questions": questions})
 
 
@@ -51,7 +51,8 @@ def start_quiz(request, quiz_id):
     while not unique:
         with contextlib.suppress(IntegrityError):
             quiz.join_code = random.randint(100000, 999999)
-            quiz.save(update_fields=["join_code"])
+            quiz.started = True
+            quiz.save(update_fields=["join_code", "started"])
             unique = True
 
     return render(request, "quiz/start_quiz.html", {"quiz": quiz})

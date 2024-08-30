@@ -41,7 +41,8 @@ def create_question_view(request, quiz_id):
             question.quiz = quiz
             question.question_number = quiz.questions.count() + 1
             question.save()
-            return redirect("quiz:index", args=[quiz.id])
+            return redirect("quiz:index", quiz_id=quiz.id)
+        print(form.errors)
     else:
         form = MultipleChoiceQuestionForm()
     return render(request, "quiz/create_question.html", {"form": form, "quiz": quiz})

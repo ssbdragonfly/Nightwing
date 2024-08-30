@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.contrib.auth import get_user_model
 
 
 class Quiz(models.Model):
@@ -12,6 +13,7 @@ class Quiz(models.Model):
         validators=[MinValueValidator(100000), MaxValueValidator(999999)],
     )
     started = models.BooleanField(default=False)
+    current_question = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -19,12 +21,32 @@ class Quiz(models.Model):
 
 class MultipleChoiceQuestion(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
-    question = models.TextField(max_length=200, default="")   
+    question = models.TextField(max_length=200, default="")
+    question_number = models.PositiveIntegerField(default=0)
     option_a = models.CharField(max_length=200, default="")
     option_b = models.CharField(max_length=200, default="")
     option_c = models.CharField(max_length=200, default="")
     option_d = models.CharField(max_length=200, default="")
-    correct_option = models.CharField(max_length=1, choices=[('A', 'Option A'), ('B', 'Option B'), ('C', 'Option C'), ('D', 'Option D')], default="A")
+    correct_option = models.CharField(
+        max_length=1,
+        choices=[("A", "Option A"), ("B", "Option B"), ("C", "Option C"), ("D", "Option D")],
+        default="A",
+    )
 
     def __str__(self):
         return self.question
+
+
+class Answer(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        MultipleChoiceQuestion, on_delete=models.CASCADE, related_name="answers"
+    )
+    answer = models.CharField(
+        max_length=1,
+        choices=[("A", "Option A"), ("B", "Option B"), ("C", "Option C"), ("D", "Option D")],
+        default="A",
+    )
+
+    def __str__(self):
+        return f"{self.user} answered {self.answer} for {self.question}"

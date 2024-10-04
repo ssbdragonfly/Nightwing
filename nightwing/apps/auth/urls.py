@@ -11,6 +11,10 @@ urlpatterns = [
         auth_views.LoginView.as_view(next_page=reverse_lazy("dashboard:index")),
         name="login",
     ),
-    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(next_page=reverse_lazy("dashboard:index")),
+        name="logout",
+    ),
     path("signup/", SignupView.as_view(), name="signup"),
 ]

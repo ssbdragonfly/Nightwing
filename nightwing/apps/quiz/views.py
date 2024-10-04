@@ -63,6 +63,21 @@ def start_quiz(request, quiz_id):
     return render(request, "quiz/start_quiz.html", {"quiz": quiz})
 
 
+def passthrough_questions(request, quiz_id, question_number):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz.current_question = question_number
+    quiz.save(update_fields=["current_question"])
+    return render(
+        request,
+        "quiz/question.html",
+        {
+            "quiz": quiz,
+            "next_question": quiz.current_question + 1,
+            "total_questions": quiz.questions.count(),
+        },
+    )
+
+
 @csrf_exempt
 def join_quiz(request, join_code):
     quiz = get_object_or_404(Quiz, join_code=join_code)

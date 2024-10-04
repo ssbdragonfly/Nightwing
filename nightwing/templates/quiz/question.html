@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+<li>{{ question.question }}</li>
+<ul>
+    <li>Option A: {{ question.option_a }}</li>
+    <li>Option B: {{ question.option_b }}</li>
+    <li>Option C: {{ question.option_c }}</li>
+    <li>Option D: {{ question.option_d }}</li>
+</ul>
+
+{% if next_question < total_questions %}
+  <a href="{% url 'quiz:passthrough' quiz.id next_question %}" class="btn btn-primary">Next Question</a>
+{% else %}
+  <a href="{% url 'quiz:passthrough' quiz.id next_question %}" class="btn btn-primary">Finish Quiz</a>
+{% endif %}
+
+{% endblock %}

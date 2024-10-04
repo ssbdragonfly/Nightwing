@@ -2,7 +2,6 @@ from django.urls import path
 
 from . import views
 
-
 app_name = "quiz"
 
 urlpatterns = [
@@ -16,5 +15,10 @@ urlpatterns = [
         "quiz/<int:quiz_id>/answer/<int:question_id>/<int:user_id>",
         views.submit_answer_to_quiz,
         name="answer_question",
+    ),
+    path(
+        "quiz/<int:quiz_id>/<int:question_number>",
+        views.passthrough_questions,
+        name="passthrough",
     ),
 ]

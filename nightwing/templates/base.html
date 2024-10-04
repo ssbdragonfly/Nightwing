@@ -62,7 +62,10 @@
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'auth:logout' %}">Logout</a>
+            <form method="post" action="{% url 'auth:logout' %}">
+              {% csrf_token %}
+              <button class="nav-link" type="submit">Logout</button>
+            </form>
           </li>
         {% endif %}
       </ul>

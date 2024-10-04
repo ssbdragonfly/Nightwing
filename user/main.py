@@ -36,7 +36,7 @@ class App(ctk.CTk):
         self.width_1 = self.winfo_screenwidth()
         self.height_1 = self.winfo_screenheight()
         self.name = ""
-        self.geometry("300x" + str(self.height_1 - 75) + "+" + str(self.width_1 - 310) + "+0")
+        self.geometry("400x" + str(self.height_1 - 75) + "+" + str(self.width_1 - 410) + "+0")
         self.title_gen()
 
         self.user_entry = ctk.CTkEntry(
@@ -76,8 +76,8 @@ class App(ctk.CTk):
             jsonified = response.json()
             self.quiz_id = jsonified["quiz_id"]
             self.name = name
-            self.poll_server(code)
             self.render_waiting_screen()
+            self.poll_server(code)
         except requests.exceptions.JSONDecodeError:
             show_error()
             self.code_entry.delete(0, tk.END)
@@ -93,7 +93,7 @@ class App(ctk.CTk):
             "option_c": "Text 3",
             "option_d": "Text 4"
         }
-        self.question(temp)  # Simulate a response with test data
+        self.question(temp)
 
         """
         try:
@@ -115,7 +115,7 @@ class App(ctk.CTk):
             self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
-        # You can add more elements here for loading or waiting
+        #MORE
 
     def clear_screen(self):
         """Clear all widgets from the screen."""
@@ -125,15 +125,17 @@ class App(ctk.CTk):
     def question(self, response):
         """Render the question and options on the screen."""
         self.clear_screen()
+        self.title_gen()
+        self.rendered_name = ctk.CTkLabel(self, text=self.name, font=("Calibri", int(0.02 * self.height_1)))
+        self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
         # Render the question
         question_text = response["question"]
-        print(f"Question: {question_text}")  # Debugging print
         self.render_question = ctk.CTkLabel(
             master=self,
             text=question_text,
             font=("Calibri", int(0.05 * self.height_1)),
         )
-        self.render_question.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
+        self.render_question.place(relx=0.5, rely=0.23, anchor=ctk.CENTER)
 
         options = ["option_a", "option_b", "option_c", "option_d", "option_e"]
         for idx, option_key in enumerate(options):
@@ -141,11 +143,18 @@ class App(ctk.CTk):
             if option_text:
                 option_label = ctk.CTkLabel(
                     master=self,
-                    text=f"{chr(65 + idx)}. {option_text}",
+                    text=option_text,
                     font=("Calibri", int(0.03 * self.height_1))
                 )
-                print(f"{chr(65 + idx)}. {option_text}")
+                button = ctk.CTkButton(master=self, 
+                               text=f"{chr(65 + idx)}", 
+                               height=15, 
+                               width=20, 
+                               #command=self.destroy, 
+                               font = ("Calibri", 15,'bold'))
+                button.place(relx=0.3, rely=0.3 + idx * 0.05, anchor=ctk.CENTER)
                 option_label.place(relx=0.5, rely=0.3 + idx * 0.05, anchor=ctk.CENTER)
+
 
 
     def title_gen(self):

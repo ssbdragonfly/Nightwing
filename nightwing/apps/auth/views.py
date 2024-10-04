@@ -6,7 +6,7 @@ from .forms import SignupUserForm
 
 
 class SignupView(FormView):
-    success_url = reverse_lazy("dashboard:startup")
+    success_url = reverse_lazy("dashboard:index")
     form_class = SignupUserForm
     template_name = "registration/signup.html"
 

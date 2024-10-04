@@ -13,13 +13,16 @@ T = TypeVar("T")
 
 def pcall(func: Callable[P, object]) -> Callable[P, None]:
     """Call a function, suppressing all errors."""
+
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> None:
         try:
             func(*args, **kwargs)
         except Exception:  # noqa: BLE001
             traceback.print_exc()
+
     return wrapper
+
 
 def show_error():
     tk.messagebox.showerror("Error", "Code Invalid")
@@ -45,7 +48,9 @@ class App(ctk.CTk):
             font=("Calibri", int(0.03 * self.height_1)),
         )
         self.user_entry.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
-        self.user_entry.bind("<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get()))
+        self.user_entry.bind(
+            "<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get())
+        )
 
         self.code_entry = ctk.CTkEntry(
             master=self,
@@ -57,12 +62,16 @@ class App(ctk.CTk):
             font=("Calibri", int(0.03 * self.height_1)),
         )
         self.code_entry.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
-        self.code_entry.bind("<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get()))
+        self.code_entry.bind(
+            "<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get())
+        )
 
     @pcall
     def send_code(self, code: str, name: str):
         try:
-            response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{code}") # Initial POST request
+            response = requests.post(
+                f"http://127.0.0.1:8000/quiz/quiz/{code}"
+            )  # Initial POST request
             jsonified = response.json()
             self.quiz_id = jsonified["quiz_id"]
             self.name = name
@@ -81,21 +90,22 @@ class App(ctk.CTk):
             jsonified = response.json()
 
             if jsonified.get("status") == "ready":
-                print("Quiz is ready!") #Placeholder because idk
+                print("Quiz is ready!")  # Placeholder because idk
                 return
 
         except Exception:  # noqa: BLE001
             print("No questions")
-            return #no question out yet
+            return  # no question out yet
 
-        self.after(1000, lambda: self.poll_server(code)) #silly little loop
+        self.after(1000, lambda: self.poll_server(code))  # silly little loop
 
     def render_waiting_screen(self):
         self.clear_screen()
         self.title_gen()
-        self.rendered_name = ctk.CTkLabel(self, text=self.name, font=("Calibri", int(0.02 * self.height_1)))
+        self.rendered_name = ctk.CTkLabel(
+            self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
+        )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
-
 
     def clear_screen(self):
         for widget in self.winfo_children():

@@ -99,4 +99,4 @@ def submit_answer_to_quiz(request, quiz_id, question_id, user_id):
         question = MultipleChoiceQuestion.objects.get(id=question_id, quiz=quiz)
         question.answers.create(answer=answer, user=user)
         return JsonResponse({"message": "Success!"})
-    return JsonResponse({"errors": form.errors}, status=400, reason="Invalid POST data")
+    return JsonResponse({"errors": form.errors.as_json()}, status=400, reason="Invalid POST data")

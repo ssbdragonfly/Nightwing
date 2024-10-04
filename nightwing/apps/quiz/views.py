@@ -1,7 +1,13 @@
 import contextlib
+import json
+import ast
 import random
+import logging
+from django.contrib import messages
 
 from django import http
+
+logger = logging.getLogger(__name__)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -12,13 +18,15 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import MultipleChoiceQuestionForm, QuestionForm, QuizForm
 from .models import MultipleChoiceQuestion, Quiz
 
+import os
+import google.generativeai as genai
+from django.conf import settings
 
 @login_required
 def quiz_index(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     questions = quiz.questions.all()
     return render(request, "quiz/view_quiz.html", {"quiz": quiz, "questions": questions})
-
 
 @login_required
 def create_quiz(request):
@@ -28,6 +36,52 @@ def create_quiz(request):
             quiz = form.save(commit=False)
             quiz.owner = request.user
             quiz.save()
+            quiz.save()
+
+            if form.cleaned_data['use_ai']:
+                genai.configure(api_key='AIzaSyDngfpFX8fyBDAGMCvP6IFaedSBo6pfMlc')
+                model = genai.GenerativeModel('gemini-pro')
+
+                prompt = f"Create {form.cleaned_data['num_questions']} multiple-choice questions about {form.cleaned_data['topic']}. For each question, provide 4 options (A, B, C, D) and indicate the correct answer. Format the output as a Python list of dictionaries, where each dictionary represents a question with keys 'question', 'option_a', 'option_b', 'option_c', 'option_d', and 'correct_option'."
+
+                response = model.generate_content(prompt)
+                response_text = response.text.strip().lstrip('`').rstrip('`')
+                if response_text.startswith('python\n'):
+                    response_text = response_text[7:]
+                
+                try:
+                    questions = json.loads(response_text)
+                except json.JSONDecodeError:
+                    try:
+                        start = response_text.index('[') if '[' in response_text else response_text.index('{')
+                        end = response_text.rindex(']') if ']' in response_text else response_text.rindex('}')
+                        questions = ast.literal_eval(response_text[start:end+1])
+                    except (ValueError, SyntaxError) as e:
+                        logging.error(f"Error parsing AI response: {str(e)}")
+                        messages.error(request, "An error occurred while generating questions. Please try again or create questions manually.")
+                        quiz.delete()
+                        return render(request, "quiz/create_quiz.html", {"form": form})
+
+                if not isinstance(questions, list) or not all(isinstance(q, dict) for q in questions):
+                    logging.error(f"Invalid question format: {questions}")
+                    messages.error(request, "An error occurred while generating questions. Please try again or create questions manually.")
+                    quiz.delete()
+                    return render(request, "quiz/create_quiz.html", {"form": form})
+
+                for i, q in enumerate(questions, start=1):
+                    MultipleChoiceQuestion.objects.create(
+                        quiz=quiz,
+                        question_number=i,
+                        question=q['question'],
+                        option_a=q['option_a'],
+                        option_b=q['option_b'],
+                        option_c=q['option_c'],
+                        option_d=q['option_d'],
+                        correct_option=q['correct_option']
+                    )
+                messages.success(request, "Quiz created successfully with AI-generated questions!")
+            else:
+                messages.success(request, "Quiz created successfully!")
             return redirect("quiz:index", quiz_id=quiz.id)
     else:
         form = QuizForm()

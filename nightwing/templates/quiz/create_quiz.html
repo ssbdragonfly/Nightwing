@@ -7,4 +7,21 @@
         {{ form.as_p }}
         <button type="submit">Create Quiz</button>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const useAiCheckbox = document.getElementById('id_use_ai');
+            const numQuestionsField = document.getElementById('id_num_questions');
+            const topicField = document.getElementById('id_topic');
+
+            function toggleAiFields() {
+                const isChecked = useAiCheckbox.checked;
+                numQuestionsField.parentElement.style.display = isChecked ? 'block' : 'none';
+                topicField.parentElement.style.display = isChecked ? 'block' : 'none';
+            }
+
+            useAiCheckbox.addEventListener('change', toggleAiFields);
+            toggleAiFields();
+        });
+    </script>
 {% endblock %}

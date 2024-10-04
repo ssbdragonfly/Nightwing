@@ -70,7 +70,7 @@ class App(ctk.CTk):
     def send_code(self, code: str, name: str):
         try:
             response = requests.post(
-                f"http://127.0.0.1:8000/quiz/quiz/{code}"
+                f"http://127.0.0.1:8000/quiz/quiz/{code}/"
             )  # Initial POST request
             jsonified = response.json()
             self.quiz_id = jsonified["quiz_id"]
@@ -86,7 +86,7 @@ class App(ctk.CTk):
     def poll_server(self, code: str):
         """Poll the server every second for a response."""
         try:
-            response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{code}")
+            response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{code}/")
             jsonified = response.json()
 
             if jsonified.get("status") == "ready":

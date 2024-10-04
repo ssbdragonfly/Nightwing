@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import MultipleChoiceQuestionForm, QuestionForm, QuizForm
 from .models import MultipleChoiceQuestion, Quiz
@@ -62,11 +63,13 @@ def start_quiz(request, quiz_id):
     return render(request, "quiz/start_quiz.html", {"quiz": quiz})
 
 
+@csrf_exempt
 def join_quiz(request, join_code):
     quiz = get_object_or_404(Quiz, join_code=join_code)
     return JsonResponse({"quiz_id": quiz.id})
 
 
+@csrf_exempt
 def get_question(request, quiz_id: int):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     if request.method != "POST" or not quiz.started:
@@ -83,6 +86,7 @@ def get_question(request, quiz_id: int):
     )
 
 
+@csrf_exempt
 def submit_answer_to_quiz(request, quiz_id, question_id, user_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     user = get_object_or_404(User, id=user_id)

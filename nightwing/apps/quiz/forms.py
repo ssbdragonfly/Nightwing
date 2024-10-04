@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import MultipleChoiceQuestion, Quiz
+from .models import Answer, MultipleChoiceQuestion, Quiz
 
 
 class QuizForm(forms.ModelForm):
@@ -17,4 +17,6 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
 
 
 class QuestionForm(forms.Form):
-    answer = forms.ChoiceField(choices=[("A", "A"), ("B", "B"), ("C", "C"), ("D", "D")])
+    class Meta:
+        model = Answer
+        fields = ["answer"]

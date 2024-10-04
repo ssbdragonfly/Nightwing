@@ -1,4 +1,5 @@
 import functools
+import json
 import tkinter as tk
 import traceback
 from collections.abc import Callable
@@ -77,7 +78,7 @@ class App(ctk.CTk):
             self.name = name
             self.poll_server(code)
             self.render_waiting_screen()
-        except Exception:  # noqa: BLE001
+        except requests.exceptions.JSONDecodeError:
             show_error()
             self.code_entry.delete(0, tk.END)
             self.code_entry.insert(0, "")
@@ -85,19 +86,27 @@ class App(ctk.CTk):
 
     def poll_server(self, code: str):
         """Poll the server every second for a response."""
-        try:
-            response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{code}/")
-            jsonified = response.json()
+        temp = {
+            "question": "Question text",
+            "option_a": "Text 1",
+            "option_b": "Text 2",
+            "option_c": "Text 3",
+            "option_d": "Text 4"
+        }
+        self.question(temp)  # Simulate a response with test data
 
+        """
+        try:
+            response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question")
+            jsonified = response.json()
             if jsonified.get("status") == "ready":
-                print("Quiz is ready!")  # Placeholder because idk
+                self.question(jsonified)
                 return
 
         except Exception:  # noqa: BLE001
-            print("No questions")
+            self.after(1000, lambda: self.poll_server(code))  # Poll every 1 second
             return  # no question out yet
-
-        self.after(1000, lambda: self.poll_server(code))  # silly little loop
+        """
 
     def render_waiting_screen(self):
         self.clear_screen()
@@ -106,22 +115,45 @@ class App(ctk.CTk):
             self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
+        # You can add more elements here for loading or waiting
 
     def clear_screen(self):
+        """Clear all widgets from the screen."""
         for widget in self.winfo_children():
             widget.destroy()
 
+    def question(self, response):
+        """Render the question and options on the screen."""
+        self.clear_screen()
+        # Render the question
+        question_text = response["question"]
+        print(f"Question: {question_text}")  # Debugging print
+        self.render_question = ctk.CTkLabel(
+            master=self,
+            text=question_text,
+            font=("Calibri", int(0.05 * self.height_1)),
+        )
+        self.render_question.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
+
+        options = ["option_a", "option_b", "option_c", "option_d", "option_e"]
+        for idx, option_key in enumerate(options):
+            option_text = response.get(option_key,"")
+            if option_text:
+                option_label = ctk.CTkLabel(
+                    master=self,
+                    text=f"{chr(65 + idx)}. {option_text}",
+                    font=("Calibri", int(0.03 * self.height_1))
+                )
+                print(f"{chr(65 + idx)}. {option_text}")
+                option_label.place(relx=0.5, rely=0.3 + idx * 0.05, anchor=ctk.CENTER)
+
+
     def title_gen(self):
+        """Generate the title of the app."""
         self.title = ctk.CTkLabel(
             self, text="NightWing Quizzes", font=("Calibri", int(0.05 * self.height_1))
         )
         self.title.place(relx=0.5, rely=0.075, anchor=ctk.CENTER)
-
-
-"""
-    def launch_function(self):
-        print("test")
-"""
 
 
 def main():

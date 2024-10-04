@@ -25,7 +25,9 @@ def create_quiz(request):
     if request.method == "POST":
         form = QuizForm(request.POST)
         if form.is_valid():
-            quiz = form.save()
+            quiz = form.save(commit=False)
+            quiz.owner = request.user
+            quiz.save()
             return redirect("quiz:index", quiz_id=quiz.id)
     else:
         form = QuizForm()
@@ -56,13 +58,18 @@ def start_quiz(request, quiz_id):
     while not unique:
         with contextlib.suppress(IntegrityError):
             quiz.join_code = random.randint(100000, 999999)
+            # reset any previous state
             quiz.started = True
+            quiz.finished = False
+            quiz.participants.clear()
+            quiz.current_question = 0
             quiz.save(update_fields=["join_code", "started"])
             unique = True
 
     return render(request, "quiz/start_quiz.html", {"quiz": quiz})
 
 
+@login_required
 def passthrough_questions(request, quiz_id, question_number):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     quiz.current_question = question_number
@@ -78,11 +85,18 @@ def passthrough_questions(request, quiz_id, question_number):
     )
 
 
+@login_required
 def finish_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     quiz.finished = True
     quiz.save(update_fields=["finished"])
     return render(request, "quiz/finish_quiz.html", {"quiz": quiz})
+
+
+@login_required
+def list_quizzes(request):
+    quizzes = request.user.quizzes.all()
+    return render(request, "quiz/list_quizzes.html", {"quizzes": quizzes})
 
 
 @csrf_exempt

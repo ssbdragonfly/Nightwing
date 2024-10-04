@@ -15,6 +15,10 @@ class Quiz(models.Model):
     started = models.BooleanField(default=False)
     current_question = models.PositiveIntegerField(default=0)
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
+    finished = models.BooleanField(default=False)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="quizzes"
+    )
 
     def __str__(self):
         return self.title

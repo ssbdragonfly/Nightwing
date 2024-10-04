@@ -63,6 +63,28 @@ def start_quiz(request, quiz_id):
     return render(request, "quiz/start_quiz.html", {"quiz": quiz})
 
 
+def passthrough_questions(request, quiz_id, question_number):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz.current_question = question_number
+    quiz.save(update_fields=["current_question"])
+    return render(
+        request,
+        "quiz/question.html",
+        {
+            "quiz": quiz,
+            "next_question": quiz.current_question + 1,
+            "total_questions": quiz.questions.count(),
+        },
+    )
+
+
+def finish_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz.finished = True
+    quiz.save(update_fields=["finished"])
+    return render(request, "quiz/finish_quiz.html", {"quiz": quiz})
+
+
 @csrf_exempt
 def join_quiz(request, join_code):
     quiz = get_object_or_404(Quiz, join_code=join_code)
@@ -74,6 +96,10 @@ def get_question(request, quiz_id: int):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     if request.method != "POST" or not quiz.started:
         raise http.Http404
+
+    if quiz.finished:
+        return JsonResponse({"message": "Quiz has finished!"})
+
     question = quiz.questions.get(question_number=quiz.current_question)
     return JsonResponse(
         {
@@ -90,13 +116,20 @@ def get_question(request, quiz_id: int):
 def submit_answer_to_quiz(request, quiz_id, question_id, user_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     user = get_object_or_404(User, id=user_id)
+    question = get_object_or_404(
+        quiz.questions,
+        id=question_id,
+    )
     if request.method != "POST":
         raise http.Http404
 
     form = QuestionForm(request.POST)
     if form.is_valid():
-        answer = form.cleaned_data["answer"]
-        question = MultipleChoiceQuestion.objects.get(id=question_id, quiz=quiz)
-        question.answers.create(answer=answer, user=user)
+        answer = form.save(commit=False)
+        answer.question = question
+        answer.user = user
+        answer.save()
+        quiz.participants.add(user)
+        quiz.save()
         return JsonResponse({"message": "Success!"})
-    return JsonResponse({"errors": form.errors}, status=400, reason="Invalid POST data")
+    return JsonResponse({"errors": form.errors.as_json()}, status=400, reason="Invalid POST data")

@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.contrib.auth import get_user_model
 
 
 class Quiz(models.Model):
@@ -14,6 +14,7 @@ class Quiz(models.Model):
     )
     started = models.BooleanField(default=False)
     current_question = models.PositiveIntegerField(default=0)
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
 
     def __str__(self):
         return self.title
@@ -38,7 +39,7 @@ class MultipleChoiceQuestion(models.Model):
 
 
 class Answer(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     question = models.ForeignKey(
         MultipleChoiceQuestion, on_delete=models.CASCADE, related_name="answers"
     )

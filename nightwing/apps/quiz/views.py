@@ -1,13 +1,12 @@
+import ast
 import contextlib
 import json
-import ast
-import random
 import logging
-from django.contrib import messages
+import random
 
+import google.generativeai as genai
 from django import http
-
-logger = logging.getLogger(__name__)
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -18,9 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import MultipleChoiceQuestionForm, QuestionForm, QuizForm
 from .models import MultipleChoiceQuestion, Quiz
 
-import os
-import google.generativeai as genai
-from django.conf import settings
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -67,7 +64,7 @@ def create_quiz(request):
                         )
                         questions = ast.literal_eval(response_text[start : end + 1])
                     except (ValueError, SyntaxError) as e:
-                        logging.error(f"Error parsing AI response: {str(e)}")
+                        logging.error(f"Error parsing AI response: {e!s}")
                         messages.error(
                             request,
                             "An error occurred while generating questions. Please try again or create questions manually.",

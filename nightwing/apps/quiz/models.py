@@ -13,7 +13,7 @@ class Quiz(models.Model):
         validators=[MinValueValidator(100000), MaxValueValidator(999999)],
     )
     started = models.BooleanField(default=False)
-    current_question = models.PositiveIntegerField(default=0)
+    current_question = models.PositiveIntegerField(default=1)
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
     finished = models.BooleanField(default=False)
     owner = models.ForeignKey(

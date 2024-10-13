@@ -1,5 +1,4 @@
 import functools
-import json
 import tkinter as tk
 import traceback
 from collections.abc import Callable
@@ -11,23 +10,19 @@ import requests
 P = ParamSpec("P")
 T = TypeVar("T")
 
-
 def pcall(func: Callable[P, object]) -> Callable[P, None]:
     """Call a function, suppressing all errors."""
-
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> None:
         try:
             func(*args, **kwargs)
-        except Exception:  # noqa: BLE001
+        except Exception:
             traceback.print_exc()
 
     return wrapper
 
-
 def show_error():
     tk.messagebox.showerror("Error", "Code Invalid")
-
 
 class App(ctk.CTk):
     def __init__(self):
@@ -66,6 +61,13 @@ class App(ctk.CTk):
         self.code_entry.bind(
             "<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get())
         )
+        self.go = ctk.CTkButton(master=self, 
+                               text="Join Quiz!", 
+                               height=int(0.05 * self.height_1),
+                               width=int(0.08 * self.width_1),
+                               command=lambda: self.send_code(self.code_entry.get(), self.user_entry.get()), 
+                               font = ("Calibri", 15,'bold'))
+        self.go.place(relx=0.5, rely=0.4, anchor=ctk.CENTER)
 
     @pcall
     def send_code(self, code: str, name: str):
@@ -78,7 +80,7 @@ class App(ctk.CTk):
             self.name = name
             self.render_waiting_screen()
             self.poll_server(code)
-        except requests.exceptions.JSONDecodeError:
+        except Exception: #Broke :(
             show_error()
             self.code_entry.delete(0, tk.END)
             self.code_entry.insert(0, "")
@@ -86,27 +88,32 @@ class App(ctk.CTk):
 
     def poll_server(self, code: str):
         """Poll the server every second for a response."""
+        """
         temp = {
-            "question": "Question text",
-            "option_a": "Text 1",
-            "option_b": "Text 2",
-            "option_c": "Text 3",
-            "option_d": "Text 4"
+            "question": "What is the capital of France?",
+            "option_a": "Paris",
+            "option_b": "Dublin",
+            "option_c": "Oslo",
+            "option_d": "Hamburg",
         }
         self.question(temp)
-
         """
+
+        #"""
         try:
             response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question")
+            print(response)
             jsonified = response.json()
             if jsonified.get("status") == "ready":
                 self.question(jsonified)
+                print("Question transferred")
                 return
-
-        except Exception:  # noqa: BLE001
+            
+        except Exception as e:  # noqa: BLE001
             self.after(1000, lambda: self.poll_server(code))  # Poll every 1 second
+            print(type(e))
             return  # no question out yet
-        """
+        #"""
 
     def render_waiting_screen(self):
         self.clear_screen()
@@ -128,34 +135,32 @@ class App(ctk.CTk):
         self.title_gen()
         self.rendered_name = ctk.CTkLabel(self, text=self.name, font=("Calibri", int(0.02 * self.height_1)))
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
-        # Render the question
+        #Render the question
         question_text = response["question"]
-        self.render_question = ctk.CTkLabel(
+        self.render_question = ctk.CTkTextbox(
             master=self,
-            text=question_text,
+            wrap=tk.WORD,
             font=("Calibri", int(0.05 * self.height_1)),
+            width=400,
+            height=100
         )
         self.render_question.place(relx=0.5, rely=0.23, anchor=ctk.CENTER)
+        self.render_question.insert(tk.END, question_text)
+        self.render_question.configure(state="disabled")
 
-        options = ["option_a", "option_b", "option_c", "option_d", "option_e"]
+        options = ["option_a", "option_b", "option_c", "option_d", "option_e", "option_f", "option_g"]
+        radio_var = tk.IntVar(value=0)
         for idx, option_key in enumerate(options):
-            option_text = response.get(option_key,"")
+            option_text = response.get(option_key, "")
             if option_text:
-                option_label = ctk.CTkLabel(
+                radio_button = ctk.CTkRadioButton(
                     master=self,
                     text=option_text,
+                    variable=radio_var,
+                    value=idx+1,
                     font=("Calibri", int(0.03 * self.height_1))
                 )
-                button = ctk.CTkButton(master=self, 
-                               text=f"{chr(65 + idx)}", 
-                               height=15, 
-                               width=20, 
-                               #command=self.destroy, 
-                               font = ("Calibri", 15,'bold'))
-                button.place(relx=0.3, rely=0.3 + idx * 0.05, anchor=ctk.CENTER)
-                option_label.place(relx=0.5, rely=0.3 + idx * 0.05, anchor=ctk.CENTER)
-
-
+                radio_button.place(relx=0.5, rely=0.4 + idx * 0.05, anchor=ctk.CENTER)
 
     def title_gen(self):
         """Generate the title of the app."""

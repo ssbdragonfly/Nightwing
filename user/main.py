@@ -88,32 +88,16 @@ class App(ctk.CTk):
 
     def poll_server(self, code: str):
         """Poll the server every second for a response."""
-        """
-        temp = {
-            "question": "What is the capital of France?",
-            "option_a": "Paris",
-            "option_b": "Dublin",
-            "option_c": "Oslo",
-            "option_d": "Hamburg",
-        }
-        self.question(temp)
-        """
-
-        #"""
         try:
             response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question")
-            print(response)
             jsonified = response.json()
-            if jsonified.get("status") == "ready":
-                self.question(jsonified)
-                print("Question transferred")
-                return
+            print(jsonified)
+            self.question(jsonified)
             
         except Exception as e:  # noqa: BLE001
             self.after(1000, lambda: self.poll_server(code))  # Poll every 1 second
             print(type(e))
             return  # no question out yet
-        #"""
 
     def render_waiting_screen(self):
         self.clear_screen()
@@ -131,6 +115,7 @@ class App(ctk.CTk):
 
     def question(self, response):
         """Render the question and options on the screen."""
+        print(response)
         self.clear_screen()
         self.title_gen()
         self.rendered_name = ctk.CTkLabel(self, text=self.name, font=("Calibri", int(0.02 * self.height_1)))

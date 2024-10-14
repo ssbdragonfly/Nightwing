@@ -131,7 +131,7 @@ def start_quiz(request, quiz_id):
             quiz.started = True
             quiz.finished = False
             quiz.participants.clear()
-            quiz.current_question = 0
+            quiz.current_question = 1
             quiz.save(update_fields=["join_code", "started"])
             unique = True
 
@@ -143,11 +143,13 @@ def passthrough_questions(request, quiz_id, question_number):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     quiz.current_question = question_number
     quiz.save(update_fields=["current_question"])
+    question = get_object_or_404(quiz.questions, question_number=question_number)
     return render(
         request,
         "quiz/question.html",
         {
             "quiz": quiz,
+            "question": question,
             "next_question": quiz.current_question + 1,
             "total_questions": quiz.questions.count(),
         },

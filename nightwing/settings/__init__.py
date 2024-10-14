@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "nightwing.apps.auth",
     "nightwing.apps.dashboard",
     "nightwing.apps.quiz",
+    "nightwing.apps.store",
 ]
 
 MIDDLEWARE = [

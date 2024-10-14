@@ -217,5 +217,9 @@ def submit_answer_to_quiz(request, quiz_id, question_id, username):
         answer.save()
         quiz.participants.add(user)
         quiz.save()
-        return JsonResponse({"message": "Success!"})
-    return JsonResponse({"errors": form.errors.as_json()}, status=400, reason="Invalid POST data")
+        return JsonResponse({"message": "success"})
+    return JsonResponse(
+        {"message": "failure", "errors": form.errors.as_json()},
+        status=400,
+        reason="Invalid POST data",
+    )

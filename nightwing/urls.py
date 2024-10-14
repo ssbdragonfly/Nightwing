@@ -23,4 +23,5 @@ urlpatterns = [
     path("auth/", include("nightwing.apps.auth.urls", namespace="auth")),
     path("", include("nightwing.apps.dashboard.urls", namespace="dashboard")),
     path("quiz/", include("nightwing.apps.quiz.urls", namespace="quiz")),
+    path("store/", include("nightwing.apps.store.urls", namespace="store")),
 ]

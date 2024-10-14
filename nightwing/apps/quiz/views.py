@@ -193,14 +193,15 @@ def get_question(request, quiz_id: int):
             "option_b": question.option_b,
             "option_c": question.option_c,
             "option_d": question.option_d,
+            "id": question.id,
         }
     )
 
 
 @csrf_exempt
-def submit_answer_to_quiz(request, quiz_id, question_id, user_id):
+def submit_answer_to_quiz(request, quiz_id, question_id, username):
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    user = get_object_or_404(User, id=user_id)
+    user = get_object_or_404(User, username=username)
     question = get_object_or_404(
         quiz.questions,
         id=question_id,

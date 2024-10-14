@@ -13,7 +13,7 @@ urlpatterns = [
     path("quiz/<int:join_code>/", views.join_quiz, name="join"),
     path("quiz/<int:quiz_id>/question", views.get_question, name="get_question"),
     path(
-        "quiz/<int:quiz_id>/answer/<int:question_id>/<int:user_id>",
+        "quiz/<int:quiz_id>/answer/<int:question_id>/<str:username>",
         views.submit_answer_to_quiz,
         name="answer_question",
     ),

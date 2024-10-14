@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
-
 {% block main %}
+<div style="border: 2px solid #ddd; padding: 20px; margin-bottom: 30px; text-align: center; border-radius: 10px;">
+    <p><strong>Quiz Code: <span id="quiz-code">{{ quiz.join_code }}</span></strong></p>
+    <button onclick="copyToClipboard()" class="btn btn-info" style="margin-top: 10px;">Copy to Clipboard</button>
+</div>
+
 <h2>Join {{ quiz.title | title }}!</h2>
 
 <p>
@@ -10,4 +14,13 @@ Enter the join code:
 </p>
 
 <a href="{% url 'quiz:passthrough' quiz.id 1 %}" class="btn btn-primary">First Question</a>
+
+<script>
+    function copyToClipboard() {
+        var quizCode = document.getElementById("quiz-code").innerText;
+        navigator.clipboard.writeText(quizCode).catch(function(error) {
+            console.error("Failed to copy quiz code: ", error);
+        });
+    }
+</script>
 {% endblock %}

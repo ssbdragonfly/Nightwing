@@ -10,7 +10,6 @@
 .
 """  # noqa: D205
 import functools
-import time
 import tkinter as tk
 import traceback
 from collections.abc import Callable
@@ -30,7 +29,6 @@ def pcall(func: Callable[P, object]) -> Callable[P, None]:
             func(*args, **kwargs)
         except Exception:
             traceback.print_exc()
-
     return wrapper
 
 def show_error():
@@ -57,11 +55,14 @@ class App(ctk.CTk):
             corner_radius=10,
             font=("Calibri", int(0.03 * self.height_1)),
         )
-        self.user_entry.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
+        self.user_entry.place(
+            relx=0.5, 
+            rely=0.3, 
+            anchor=ctk.CENTER
+        )
         self.user_entry.bind(
             "<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get())
         )
-
         self.code_entry = ctk.CTkEntry(
             master=self,
             placeholder_text="Enter Code",
@@ -71,11 +72,14 @@ class App(ctk.CTk):
             corner_radius=10,
             font=("Calibri", int(0.03 * self.height_1)),
         )
-        self.code_entry.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
+        self.code_entry.place(
+            relx=0.5, 
+            rely=0.2, 
+            anchor=ctk.CENTER
+        )
         self.code_entry.bind(
             "<Return>", lambda event: self.send_code(self.code_entry.get(), self.user_entry.get())
         )
-        
         self.go = ctk.CTkButton(
             master=self, 
             text="Join Quiz!", 
@@ -84,20 +88,30 @@ class App(ctk.CTk):
             command=lambda: self.send_code(self.code_entry.get(), self.user_entry.get()), 
             font=("Calibri", 15, 'bold')
         )
-        self.go.place(relx=0.5, rely=0.4, anchor=ctk.CENTER)
+        self.go.place(
+            relx=0.5, 
+            rely=0.4, 
+            anchor=ctk.CENTER
+        )
 
     def home(self):
         self.clear_screen()
         self.start()
     
     def home_button(self):
-        self.close = ctk.CTkButton(master=self, 
-                               text="Back", 
-                               height=15, 
-                               width=20, 
-                               command=lambda: self.home(), 
-                               font = ("Calibri", 15,'bold'))
-        self.close.place(relx=0.07, rely=0.03, anchor=ctk.CENTER)
+        self.close = ctk.CTkButton(
+            master=self, 
+            text="Back", 
+            height=15, 
+            width=20, 
+            command=lambda: self.home(), 
+            font = ("Calibri", 15,'bold')
+        )
+        self.close.place(
+            relx=0.07, 
+            rely=0.03, 
+            anchor=ctk.CENTER
+        )
 
     @pcall
     def send_code(self, code: str, name: str):
@@ -130,9 +144,16 @@ class App(ctk.CTk):
         self.clear_screen()
         self.title_gen()
         self.home_button()
-        self.rendered_name = ctk.CTkLabel(self, text=self.name, font=("Calibri", int(0.02 * self.height_1)))
-        self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
-
+        self.rendered_name = ctk.CTkLabel(
+            self, 
+            text=self.name, 
+            font=("Calibri", int(0.02 * self.height_1))
+        )
+        self.rendered_name.place(
+            relx=0.5, 
+            rely=0.125, 
+            anchor=ctk.CENTER
+        )
         # Render the question
         question_text = response["question"]
         self.render_question = ctk.CTkTextbox(
@@ -142,11 +163,14 @@ class App(ctk.CTk):
             width=390,
             height=150
         )
-        self.render_question.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
+        self.render_question.place(
+            relx=0.5, 
+            rely=0.3, 
+            anchor=ctk.CENTER
+        )
         self.render_question.insert(tk.END, question_text)
         self.render_question.configure(state="disabled")
         #SIZE FOR QUESTION CODE SHOULD BE HERE
-
         options = ["option_a", "option_b", "option_c", "option_d", "option_e", "option_f", "option_g"]
         self.radio_var = tk.IntVar(value=26)
         for idx, option_key in enumerate(options):
@@ -159,13 +183,18 @@ class App(ctk.CTk):
                     value=idx + 1,
                     font=("Calibri", int(0.03 * self.height_1))
                 )
-                radio_button.place(relx=0.5, rely=0.5 + idx * 0.05, anchor=ctk.CENTER)
+                radio_button.place(
+                    relx=0.5, 
+                    rely=0.5 + idx * 0.05, 
+                    anchor=ctk.CENTER
+                )
 
         self.after(2000, lambda: self.submit_answer(response["id"]))
 
     @pcall
     def submit_answer(self, current_question_id: int):
-        if self.radio_var.get() == 26:
+        default = 26
+        if self.radio_var.get() == default:
                     warning = ctk.CTkLabel(
                         master=self,
                         text="Hurry! No answer selected.",
@@ -174,7 +203,11 @@ class App(ctk.CTk):
                         corner_radius=10,
                         font=("Calibri", int(0.03 * self.height_1)),
                     )
-                    warning.place(relx=0.5, rely=0.85, anchor=ctk.CENTER)
+                    warning.place(
+                        relx=0.5, 
+                        rely=0.85, 
+                        anchor=ctk.CENTER
+                    )
                     self.after(1000, warning.destroy)
                     self.after(1000, lambda: self.submit_answer(current_question_id))
                     return
@@ -199,7 +232,11 @@ class App(ctk.CTk):
         self.rendered_name = ctk.CTkLabel(
             self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
         )
-        self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
+        self.rendered_name.place(
+            relx=0.5, 
+            rely=0.125, 
+            anchor=ctk.CENTER
+        )
 
     def clear_screen(self):
         """Clear all widgets from the screen."""
@@ -211,15 +248,17 @@ class App(ctk.CTk):
         self.title = ctk.CTkLabel(
             self, text="NightWing Quizzes", font=("Calibri", int(0.05 * self.height_1))
         )
-        self.title.place(relx=0.5, rely=0.075, anchor=ctk.CENTER)
-
+        self.title.place(
+            relx=0.5, 
+            rely=0.075, 
+            anchor=ctk.CENTER
+        )
 
 def main():
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("green")
     app = App()
     app.mainloop()
-
 
 if __name__ == "__main__":
     main()

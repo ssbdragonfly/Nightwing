@@ -182,7 +182,11 @@ def get_question(request, quiz_id: int):
         raise http.Http404
 
     if quiz.finished:
-        return JsonResponse({"message": "Quiz has finished!"})
+        data: dict[str, str | int] = {"message": "Quiz has finished!"}
+        if request.POST.get("user_id"):
+            user = get_object_or_404(User, id=request.POST["user_id"])
+            data["correct"], data["total"] = quiz.calculate_score(user)
+        return JsonResponse(data)
 
     question = quiz.questions.get(question_number=quiz.current_question)
     return JsonResponse(

@@ -26,6 +26,14 @@ class Quiz(models.Model):
     def finished(self) -> bool:
         return self.current_question > self.questions.count()
 
+    def calculate_score(self, user):
+        total = self.questions.count()
+        correct = Answer.objects.filter(
+            question__quiz=self, user=user, answer=models.F("question__correct_option")
+        ).count()
+
+        return correct, total
+
 
 class MultipleChoiceQuestion(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")

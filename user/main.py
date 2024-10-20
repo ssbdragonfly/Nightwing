@@ -223,6 +223,26 @@ class App(ctk.CTk):
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
 
+    def render_quiz_finished(self, score: str, total: str)-> None:
+        self.clear_screen()
+        self.title_gen()
+        self.rendered_name = ctk.CTkLabel(
+            self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
+        )
+        self.rendered_name.place(
+            relx=0.5, 
+            rely=0.125, 
+            anchor=ctk.CENTER
+        )
+        self.score = ctk.CTkLabel(
+            self, text=f"You scored {score}/{total}", font=("Calibri", int(0.02 * self.height_1))
+        )
+        self.score.place(
+            relx=0.5, 
+            rely=0.3, 
+            anchor=ctk.CENTER
+        )
+
     def clear_screen(self):
         """Clear all widgets from the screen."""
         for widget in self.winfo_children():

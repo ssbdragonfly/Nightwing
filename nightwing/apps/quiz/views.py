@@ -129,7 +129,6 @@ def start_quiz(request, quiz_id):
             quiz.join_code = random.randint(100000, 999999)
             # reset any previous state
             quiz.started = True
-            quiz.finished = False
             quiz.participants.clear()
             quiz.current_question = 1
             quiz.save(update_fields=["join_code", "started"])
@@ -143,6 +142,8 @@ def passthrough_questions(request, quiz_id, question_number):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     quiz.current_question = question_number
     quiz.save(update_fields=["current_question"])
+    if quiz.finished:
+        return redirect("quiz:finish_quiz", quiz_id=quiz.id)
     question = get_object_or_404(quiz.questions, question_number=question_number)
     return render(
         request,
@@ -159,8 +160,6 @@ def passthrough_questions(request, quiz_id, question_number):
 @login_required
 def finish_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    quiz.finished = True
-    quiz.save(update_fields=["finished"])
     return render(request, "quiz/finish_quiz.html", {"quiz": quiz})
 
 

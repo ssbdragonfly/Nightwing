@@ -6,6 +6,8 @@
 - Get rid of debugging nonsensical print statements
 - Fragment all tk elements into functions and call functions
 - Clean up structure and flow (see above)
+- Add "-> None" to void methods
+- Add types to parameters
 - Question sizing (next up)
 .
 """  # noqa: D205
@@ -193,38 +195,63 @@ class App(ctk.CTk):
 
     @pcall
     def submit_answer(self, current_question_id: int):
-        default = 26
+        default = 26  # Default value for no selection
         if self.radio_var.get() == default:
-                    warning = ctk.CTkLabel(
-                        master=self,
-                        text="Hurry! No answer selected.",
-                        width=int(0.2 * self.width_1),
-                        height=int(0.04 * self.height_1),
-                        corner_radius=10,
-                        font=("Calibri", int(0.03 * self.height_1)),
-                    )
-                    warning.place(
-                        relx=0.5, 
-                        rely=0.85, 
-                        anchor=ctk.CENTER
-                    )
-                    self.after(1000, warning.destroy)
-                    self.after(1000, lambda: self.submit_answer(current_question_id))
-                    return
+            """
+            warning = ctk.CTkLabel(
+                master=self,
+                text="Hurry! No answer selected.",
+                width=int(0.2 * self.width_1),
+                height=int(0.04 * self.height_1),
+                corner_radius=10,
+                font=("Calibri", int(0.03 * self.height_1)),
+            )
+            warning.place(
+                relx=0.5, 
+                rely=0.85, 
+                anchor=ctk.CENTER
+            )
+            self.after(1000, warning.destroy)"""
+            self.after(1000, lambda: self.submit_answer(current_question_id))
+            return
         try:
             answer_str = f"option_{chr(self.radio_var.get() + 64)}"
-            requests.post(f"http://localhost:8000/quiz/quiz/{self.quiz_id}/answer/{current_question_id}/{self.name}",
-                        data={"answer": answer_str})
-
+            requests.post(
+                f"http://localhost:8000/quiz/quiz/{self.quiz_id}/answer/{current_question_id}/{self.name}",
+                data={"answer": answer_str}
+            )
             response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question")
             jsonified = response.json()
-
-            if jsonified["id"] != current_question_id:
+            if "message" in jsonified:
+                self.render_quiz_finished(jsonified["score"], jsonified["total"])
+                
+            elif jsonified["id"] != current_question_id:
                 self.question(jsonified)
             else:
                 self.after(1000, lambda: self.submit_answer(current_question_id))
-        except Exception:
+        except Exception:  # noqa: BLE001
             self.after(1000, lambda: self.submit_answer(current_question_id))
+
+
+    def render_quiz_finished(self, score: str, total: str)-> None:
+        self.clear_screen()
+        self.title_gen()
+        self.rendered_name = ctk.CTkLabel(
+            self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
+        )
+        self.rendered_name.place(
+            relx=0.5, 
+            rely=0.125, 
+            anchor=ctk.CENTER
+        )
+        self.score = ctk.CTkLabel(
+            self, text=f"You scored {score}/{total}", font=("Calibri", int(0.02 * self.height_1))
+        )
+        self.score.place(
+            relx=0.5, 
+            rely=0.3, 
+            anchor=ctk.CENTER
+        )
 
     def render_waiting_screen(self):
         self.clear_screen()

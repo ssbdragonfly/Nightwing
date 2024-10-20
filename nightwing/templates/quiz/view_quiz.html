@@ -1,10 +1,7 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<div style="border: 2px solid #ddd; padding: 20px; margin-bottom: 30px; text-align: center; border-radius: 10px;">
-    <p><strong>Quiz Code: <span id="quiz-code">{{ quiz.join_code }}</span></strong></p>
-    <button onclick="copyToClipboard()" class="btn btn-info" style="margin-top: 10px;">Copy to Clipboard</button>
-</div>
+{% include "quiz/copy-code.html" %}
 
 <h1>{{ quiz.title }}</h1>
 <p>{{ quiz.description }}</p>
@@ -27,12 +24,4 @@
 <a href="{% url 'quiz:create_question' quiz.id %}" class="btn btn-primary">Create More Questions</a>
 <a href="{% url 'quiz:start' quiz.id %}" class="btn btn-secondary">Start Quiz</a>
 
-<script>
-    function copyToClipboard() {
-        var quizCode = document.getElementById("quiz-code").innerText;
-        navigator.clipboard.writeText(quizCode).catch(function(error) {
-            console.error("Failed to copy quiz code: ", error);
-        });
-    }
-</script>
 {% endblock %}

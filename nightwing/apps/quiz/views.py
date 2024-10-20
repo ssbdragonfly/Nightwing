@@ -134,7 +134,7 @@ def start_quiz(request, quiz_id):
             quiz.save(update_fields=["join_code", "started"])
             unique = True
 
-    return render(request, "quiz/start_quiz.html", {"quiz": quiz})
+    return redirect("quiz:passthrough", quiz_id=quiz.id, question_number=1)
 
 
 @login_required

@@ -203,11 +203,14 @@ class App(ctk.CTk):
                 data={"answer": answer_str},
             )
 
-            response = requests.post(f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question")
+            response = requests.post(
+                f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question",
+                data={"user": self.name},
+            )
             jsonified = response.json()
             if "message" in jsonified:
                 self.render_quiz_finished(jsonified["score"], jsonified["total"])
-                
+
             elif jsonified["id"] != current_question_id:
                 self.question(jsonified)
             else:
@@ -223,25 +226,17 @@ class App(ctk.CTk):
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
 
-    def render_quiz_finished(self, score: str, total: str)-> None:
+    def render_quiz_finished(self, score: str, total: str) -> None:
         self.clear_screen()
         self.title_gen()
         self.rendered_name = ctk.CTkLabel(
             self, text=self.name, font=("Calibri", int(0.02 * self.height_1))
         )
-        self.rendered_name.place(
-            relx=0.5, 
-            rely=0.125, 
-            anchor=ctk.CENTER
-        )
+        self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
         self.score = ctk.CTkLabel(
             self, text=f"You scored {score}/{total}", font=("Calibri", int(0.02 * self.height_1))
         )
-        self.score.place(
-            relx=0.5, 
-            rely=0.3, 
-            anchor=ctk.CENTER
-        )
+        self.score.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
 
     def clear_screen(self):
         """Clear all widgets from the screen."""

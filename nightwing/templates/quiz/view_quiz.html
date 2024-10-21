@@ -3,25 +3,29 @@
 {% block main %}
 {% include "quiz/copy-code.html" %}
 
-<h1>{{ quiz.title }}</h1>
-<p>{{ quiz.description }}</p>
+<h1 class="quiz-title">{{ quiz.title }}</h1>
+<p class="quiz-description">{{ quiz.description }}</p>
 
-<h2>Questions</h2>
-<ul>
+<h2 class="questions-header">Questions</h2>
+<div class="questions-list">
     {% for question in questions %}
-        <li>{{ question.question }}</li>
-        <ul>
-            <li>Option A: {{ question.option_a }}</li>
-            <li>Option B: {{ question.option_b }}</li>
-            <li>Option C: {{ question.option_c }}</li>
-            <li>Option D: {{ question.option_d }}</li>
-        </ul>
+        <div class="question-card">
+            <h3 class="question-text">{{ forloop.counter }}. {{ question.question }}</h3>
+            <ul class="options-list">
+                <li>A. {{ question.option_a }}</li>
+                <li>B. {{ question.option_b }}</li>
+                <li>C. {{ question.option_c }}</li>
+                <li>D. {{ question.option_d }}</li>
+            </ul>
+        </div>
     {% empty %}
-        <li>No questions available for this quiz.</li>
+        <p class="no-questions">No questions available for this quiz.</p>
     {% endfor %}
-</ul>
+</div>
 
-<a href="{% url 'quiz:create_question' quiz.id %}" class="btn btn-primary">Create More Questions</a>
-<a href="{% url 'quiz:start' quiz.id %}" class="btn btn-secondary">Start Quiz</a>
+<div class="text-center mt-4">
+    <a href="{% url 'quiz:create_question' quiz.id %}" class="btn btn-primary mr-2">Create More Questions</a>
+    <a href="{% url 'quiz:start' quiz.id %}" class="btn btn-secondary">Start Quiz</a>
+</div>
 
 {% endblock %}

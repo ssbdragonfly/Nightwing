@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
 
 {% block main %}
-    <h1>Create Quiz</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Quiz</button>
-    </form>
+    <div class="form-container">
+        <h2>Create Quiz</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Create Quiz</button>
+        </form>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -16,8 +26,36 @@
 
             function toggleAiFields() {
                 const isChecked = useAiCheckbox.checked;
-                numQuestionsField.parentElement.style.display = isChecked ? 'block' : 'none';
-                topicField.parentElement.style.display = isChecked ? 'block' : 'none';
+                const numQuestionsGroup = numQuestionsField.closest('.form-group');
+                const topicGroup = topicField.closest('.form-group');
+
+                numQuestionsGroup.style.display = isChecked ? 'block' : 'none';
+                topicGroup.style.display = isChecked ? 'block' : 'none';
+
+                if (isChecked) {
+                    numQuestionsField.classList.add('form-control');
+                    topicField.classList.add('form-control');
+                    numQuestionsGroup.classList.add('mb-3');
+                    topicGroup.classList.add('mb-3');
+
+                    numQuestionsField.style.width = '100%';
+                    numQuestionsField.style.padding = '0.375rem 0.75rem';
+                    numQuestionsField.style.fontSize = '1rem';
+                    numQuestionsField.style.lineHeight = '1.5';
+                    numQuestionsField.style.color = '#495057';
+                    numQuestionsField.style.backgroundColor = '#fff';
+                    numQuestionsField.style.backgroundClip = 'padding-box';
+                    numQuestionsField.style.border = '1px solid #ced4da';
+                    numQuestionsField.style.borderRadius = '0.25rem';
+                    numQuestionsField.style.transition = 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out';
+                } else {
+                    numQuestionsField.classList.remove('form-control');
+                    topicField.classList.remove('form-control');
+                    numQuestionsGroup.classList.remove('mb-3');
+                    topicGroup.classList.remove('mb-3');
+
+                    numQuestionsField.style = '';
+                }
             }
 
             useAiCheckbox.addEventListener('change', toggleAiFields);

@@ -17,7 +17,12 @@
         </div>
         {% empty %}
         <div class="col-12">
-            <p class="text-center">No products available.</p>
+            <div class="alert alert-info text-center" role="alert">
+                <h4 class="alert-heading">No Products Available</h4>
+                <p>We're sorry, but there are currently no products available in our store.</p>
+                <hr>
+                <p class="mb-0">Please check back later for new and exciting products!</p>
+            </div>
         </div>
       {% endfor %}
     </div>

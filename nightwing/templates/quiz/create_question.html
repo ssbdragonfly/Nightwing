@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<h1>Create Question for {{ quiz.title }}</h1>
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-      <p>{{ field.label | title }}: {{ field }}</p>
-    {% endfor %}
-    <button type="submit">Create Question</button>
-</form>
+<div class="form-container">
+    <h2>Create Question for {{ quiz.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Create Question</button>
+    </form>
+</div>
 <a href="{% url 'quiz:index' quiz.id %}" class="btn btn-secondary">Back to Quiz</a>
 {% endblock %}
 

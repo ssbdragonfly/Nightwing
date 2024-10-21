@@ -1,26 +1,33 @@
 {% extends "base.html" %}
 
 {% block main %}
-  <div class="text-center my-4">
+  <div class="landing-page">
     <h1 class="display-4">Welcome to Nightwing</h1>
     <p class="lead">
-        Nightwing is a project designed to enhance user attention and retention during long meetings
-        by integrating live time quizzes into the experience.
+        Enhance user attention and retention during long meetings with live interactive quizzes.
     </p>
     <p>
-        With Nightwing, you can transform dull presentations into engaging, interactive sessions
-        that keep your audience involved and focused.
+        Transform dull presentations into engaging, interactive sessions that keep your audience involved and focused.
     </p>
-    <p>
-        Our platform offers:
-    </p>
-    <ul class="list-unstyled">
-        <li>✔️ Real-time quizzes to keep participants engaged</li>
-        <li>✔️ Instant feedback to improve understanding</li>
-        <li>✔️ Easy-to-use interface for creating and managing quizzes</li>
-    </ul>
-    <p>
-        Join us in revolutionizing the way we interact in meetings!
-    </p>
+    <div class="mt-4 mb-5">
+        <a href="{% url 'quiz:create' %}" class="btn btn-primary btn-lg">Create Your First Quiz</a>
+    </div>
+    <div class="feature-list">
+        <div class="feature-item">
+            <i class="fas fa-clock"></i>
+            <h3>Real-time Quizzes</h3>
+            <p>Keep participants engaged throughout the meeting</p>
+        </div>
+        <div class="feature-item">
+            <i class="fas fa-comments"></i>
+            <h3>Instant Feedback</h3>
+            <p>Improve understanding with immediate responses</p>
+        </div>
+        <div class="feature-item">
+            <i class="fas fa-tools"></i>
+            <h3>Easy-to-use Interface</h3>
+            <p>Create and manage quizzes effortlessly</p>
+        </div>
+    </div>
 </div>
 {% endblock %}

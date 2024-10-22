@@ -114,6 +114,7 @@ class App(ctk.CTk):
             jsonified = response.json()
             self.quiz_id = jsonified["quiz_id"]
             self.name = name
+            print("\tGot quiz id: {self.quiz_id}")
             self.render_waiting_screen()
             self.poll_server()
         except Exception:  # Broke :(
@@ -123,6 +124,7 @@ class App(ctk.CTk):
 
     def poll_server(self):
         """Poll the server for a response."""
+        print("Polled Server")
         try:
             response = requests.post(
                 f"http://127.0.0.1:8000/quiz/quiz/{self.quiz_id}/question",
@@ -130,12 +132,14 @@ class App(ctk.CTk):
             )
             jsonified = response.json()
             self.question(jsonified)
+            print(f"\tPoll succesful, {jsonified}")
         except Exception:
             self.after(1000, self.poll_server)  # Poll every 1 second
 
     @pcall
     def question(self, response):
         """Render the question and options on the screen."""
+        print("Tried to render question")
         self.clear_screen()
         self.title_gen()
         self.home_button()
@@ -185,6 +189,7 @@ class App(ctk.CTk):
 
     @pcall
     def submit_answer(self, current_question_id: int):
+        print("Submitted answer")
         default = 26  # Default value for no selection
         if self.radio_var.get() == default:
             warning = ctk.CTkLabel(
@@ -218,6 +223,7 @@ class App(ctk.CTk):
                 self.question(jsonified)
             else:
                 self.after(1000, lambda: self.submit_answer(current_question_id))
+            print("\t Poll recieved {jsonified}")
         except Exception:  # noqa: BLE001
             self.after(1000, lambda: self.submit_answer(current_question_id))
 

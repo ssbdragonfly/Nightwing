@@ -15,7 +15,7 @@
 import functools
 import tkinter as tk
 import traceback
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from typing import ParamSpec, TypeVar
 
 import customtkinter as ctk
@@ -149,7 +149,8 @@ class App(ctk.CTk):
             master=self,
             wrap=tk.WORD,
             font=("Calibri", int(0.04 * self.height_1)),
-            width=390,
+            fg_color="transparent",
+            width=self.winfo_width() - 100,
             height=150,
         )
         self.render_question.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
@@ -165,18 +166,20 @@ class App(ctk.CTk):
             "option_f",
             "option_g",
         ]
+        frame = ctk.CTkFrame(self, fg_color="transparent")
         self.radio_var = tk.IntVar(value=26)
         for idx, option_key in enumerate(options):
             option_text = response.get(option_key, "")
             if option_text:
                 radio_button = ctk.CTkRadioButton(
-                    master=self,
+                    master=frame,
                     text=option_text,
                     variable=self.radio_var,
                     value=idx + 1,
                     font=("Calibri", int(0.03 * self.height_1)),
                 )
-                radio_button.place(relx=0.5, rely=0.5 + idx * 0.05, anchor=ctk.CENTER)
+                radio_button.grid(row=idx, column=0, sticky=tk.W)
+        frame.place(relx=0.5, rely=0.6, anchor=ctk.CENTER)
 
         self.after(2000, lambda: self.submit_answer(response["id"]))
 
@@ -238,10 +241,11 @@ class App(ctk.CTk):
         )
         self.score.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
 
-    def clear_screen(self):
+    def clear_screen(self, whitelist: Sequence = ()) -> None:
         """Clear all widgets from the screen."""
         for widget in self.winfo_children():
-            widget.destroy()
+            if widget not in whitelist:
+                widget.destroy()
 
     def title_gen(self):
         """Generate the title of the app."""

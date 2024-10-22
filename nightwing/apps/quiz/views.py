@@ -125,6 +125,9 @@ def create_question_view(request, quiz_id):
 @login_required
 def start_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz.participants.clear()
+    for q in quiz.questions.all():
+        q.answers.all().delete()
 
     unique = False
     while not unique:
@@ -132,7 +135,7 @@ def start_quiz(request, quiz_id):
             quiz.join_code = random.randint(100000, 999999)
             # reset any previous state
             quiz.started = True
-            quiz.participants.clear()
+
             quiz.current_question = 1
             quiz.save(update_fields=["join_code", "started"])
             unique = True

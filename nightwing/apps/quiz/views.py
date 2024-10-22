@@ -221,13 +221,15 @@ def submit_answer_to_quiz(request, quiz_id, question_id, username):
 
     form = QuestionForm(request.POST)
     if form.is_valid():
+        old = Answer.objects.filter(question=question, user=user).all()
+        old.delete()
         answer = form.save(commit=False)
         answer.question = question
         answer.user = user
         answer.save()
-        if answer.answer == question.correct_option:
+        if not old and answer.answer.lower() == question.correct_option.lower():
             credits = Credit.get_credit(user)
-            credits.money = models.F("money") + question.points
+            credits.money = models.F("money") + question.credits
             credits.save(update_fields=["money"])
             quiz.participants.add(user)
         return JsonResponse({"message": "success"})

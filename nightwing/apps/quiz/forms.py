@@ -25,7 +25,7 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
         fields = ["question", "option_a", "option_b", "option_c", "option_d", "correct_option"]
 
 
-class QuestionForm(forms.Form):
+class QuestionForm(forms.ModelForm):
     class Meta:
         model = Answer
         fields = ["answer"]

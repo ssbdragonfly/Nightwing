@@ -200,7 +200,7 @@ class App(ctk.CTk):
             answer_str = f"option_{chr(self.radio_var.get() + 64)}"
             requests.post(
                 f"http://localhost:8000/quiz/quiz/{self.quiz_id}/answer/{current_question_id}/{self.name}",
-                data={"answer": answer_str},
+                data={"answer": answer_str.removeprefix("option_")},
             )
 
             response = requests.post(

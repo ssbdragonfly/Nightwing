@@ -48,6 +48,7 @@ class MultipleChoiceQuestion(models.Model):
         choices=[("A", "Option A"), ("B", "Option B"), ("C", "Option C"), ("D", "Option D")],
         default="A",
     )
+    credits = models.PositiveIntegerField(default=10)
 
     def __str__(self):
         return self.question

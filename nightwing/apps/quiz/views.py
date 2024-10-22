@@ -10,10 +10,12 @@ from django import http
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
+
+from nightwing.apps.store.models import Credit
 
 from .forms import MultipleChoiceQuestionForm, QuestionForm, QuizForm
 from .models import Answer, MultipleChoiceQuestion, Quiz
@@ -223,8 +225,11 @@ def submit_answer_to_quiz(request, quiz_id, question_id, username):
         answer.question = question
         answer.user = user
         answer.save()
-        quiz.participants.add(user)
-        quiz.save()
+        if answer.answer == question.correct_option:
+            credits = Credit.get_credit(user)
+            credits.money = models.F("money") + question.points
+            credits.save(update_fields=["money"])
+            quiz.participants.add(user)
         return JsonResponse({"message": "success"})
     return JsonResponse(
         {"message": "failure", "errors": form.errors.as_json()},

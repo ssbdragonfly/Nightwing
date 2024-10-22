@@ -5,6 +5,7 @@ from .models import Answer, MultipleChoiceQuestion, Quiz
 
 class QuizForm(forms.ModelForm):
     use_ai = forms.BooleanField(required=False, label="Use AI to generate questions")
+    live = forms.BooleanField(required=False, label="Generate questions as you talk")
     num_questions = forms.IntegerField(
         min_value=1, max_value=10, initial=5, label="Number of questions"
     )

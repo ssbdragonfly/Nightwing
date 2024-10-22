@@ -1,8 +1,36 @@
 {% extends "base.html" %}
 
+{% block head %}
+  <script>
+    $(function() {
+      $(".change-text").each((_, el) => {
+        $(el).on("click", function() {
+          $.post(
+            "{% url 'store:buy' %}",
+            {
+              product_id: $(this).attr("id"),
+              csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            () => {
+              $(this).text("Purchased!");
+              $(this).attr("disabled", true);
+              const money = $("#money");
+              const currentMoney = parseInt(money.text());
+              const price = parseInt($(this).parent().find(".price").text());
+              console.log(price);
+              money.text(currentMoney - price);
+            }
+          )
+        })
+      });
+    });
+  </script>
+{% endblock %}
+
 {% block main %}
   <div class="container my-4">
     <h1 class="text-center mb-4">Product Catalog</h1>
+    <div class="text-center mb-4">You have <span id="money">{{ credits.money }}</span><i class="fa-solid fa-coins"></i></div>
     <div class="row">
       {% for product in products %}
         <div class="col-md-4 mb-4">
@@ -10,8 +38,11 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
                     <p class="card-text">{{ product.description|truncatewords:20 }}</p>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ product.price }} <i class="fa-solid fa-coins"></i></h6>
+                    <h6 class="card-subtitle mb-2 text-muted price">{{ product.price }} <i class="fa-solid fa-coins"></i></h6>
                     <a href="{% url 'store:detail' product.id %}" class="btn btn-primary">View Details</a>
+                    {% if credits.money >= product.price %}
+                        <button id="{{ product.id }}" class="btn btn-primary change-text">Buy</button>
+                    {% endif %}
                 </div>
             </div>
         </div>

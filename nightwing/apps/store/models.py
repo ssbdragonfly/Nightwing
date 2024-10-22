@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Product(models.Model):
@@ -9,3 +10,15 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Credit(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    money = models.PositiveIntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f"<{type(self).__name__}: {self.user.username}, ${self.money}>"
+
+    @classmethod
+    def get_credit(cls, user):
+        return cls.objects.get_or_create(user=user)[0]

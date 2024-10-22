@@ -35,7 +35,7 @@
 </div>
 {% if quiz.on_last_question %}
     <div class="text-center">
-        <a href="{% url 'quiz:quiz_results' quiz.id %}" class="btn btn-primary">See Quiz Results</a>
+        <a href="{% url 'quiz:finish_quiz' quiz.id %}" class="btn btn-primary">See Quiz Results</a>
     </div>
 {% else %}
     <div class="text-center">

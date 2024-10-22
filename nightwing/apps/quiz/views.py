@@ -225,7 +225,7 @@ def get_question(request, quiz_id: int):
         raise http.Http404
 
     if quiz.finished:
-        data: dict[str, str | int] = {"message": "Quiz has finished!"}
+        data = {"message": "Quiz has finished!"}
         if request.POST.get("user"):
             user = get_object_or_404(User, username=request.POST["user"])
             data["correct"], data["total"] = quiz.calculate_score(user)

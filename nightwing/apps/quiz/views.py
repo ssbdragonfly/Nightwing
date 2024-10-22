@@ -164,9 +164,25 @@ def passthrough_questions(request, quiz_id, question_number):
 def question_results(request, quiz_id, question_number):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     question = get_object_or_404(quiz.questions, question_number=question_number)
-    data = {
-        char: question.answers.filter(answer__iexact=char).count() for char in ("a", "b", "c", "d")
+    data: dict[str, Any] = {
+        "labels": ["A", "B", "C", "D"],
     }
+    correct_idx = data["labels"].index(question.correct_option.upper())
+    data["datasets"] = [
+        {
+            "label": "Responses",
+            "data": [
+                question.answers.filter(answer__iexact=answer).count() for answer in data["labels"]
+            ],
+            "borderWidth": 1,
+            "backgroundColor": [
+                ("rgba(75, 44, 50, 1)" if i != correct_idx else "rgba(210, 246, 246, 1)")
+                for i in range(len(data["labels"]))
+            ],
+        }
+    ]
+    data["datasets"][0]["borderColor"] = data["datasets"][0]["backgroundColor"]
+    data["base"] = 1
     correct_answer = question.correct_option.lower()
     return render(
         request,

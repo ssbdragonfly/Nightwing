@@ -22,5 +22,8 @@ urlpatterns = [
         views.passthrough_questions,
         name="passthrough",
     ),
+    path(
+        "quiz/<int:quiz_id>/results/<int:question_number>", views.question_results, name="results"
+    ),
     path("quiz/<int:quiz_id>/results", views.finish_quiz, name="finish_quiz"),
 ]

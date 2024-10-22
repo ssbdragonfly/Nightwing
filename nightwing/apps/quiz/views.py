@@ -161,6 +161,27 @@ def passthrough_questions(request, quiz_id, question_number):
 
 
 @login_required
+def question_results(request, quiz_id, question_number):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    question = get_object_or_404(quiz.questions, question_number=question_number)
+    data = {
+        char: question.answers.filter(answer__iexact=char).count() for char in ("a", "b", "c", "d")
+    }
+    correct_answer = question.correct_option.lower()
+    return render(
+        request,
+        "quiz/question_results.html",
+        {
+            "question": question,
+            "quiz": quiz,
+            "answer_data": data,
+            "correct_answer": correct_answer,
+            "next_question": quiz.current_question + 1,
+        },
+    )
+
+
+@login_required
 def finish_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     return render(request, "quiz/finish_quiz.html", {"quiz": quiz})

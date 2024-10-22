@@ -12,10 +12,6 @@
     <li>Option D: {{ question.option_d }}</li>
 </ul>
 
-{% if next_question < total_questions %}
-  <a href="{% url 'quiz:passthrough' quiz.id next_question %}" class="btn btn-primary">Next Question</a>
-{% else %}
-  <a href="{% url 'quiz:passthrough' quiz.id next_question %}" class="btn btn-primary">Finish Quiz</a>
-{% endif %}
+<a href="{% url 'quiz:results' quiz.id quiz.current_question %}" class="btn btn-primary">See Results</a>
 
 {% endblock %}

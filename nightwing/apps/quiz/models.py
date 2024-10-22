@@ -26,6 +26,10 @@ class Quiz(models.Model):
     def finished(self) -> bool:
         return self.current_question > self.questions.count()
 
+    @property
+    def on_last_question(self) -> bool:
+        return self.current_question == self.questions.count()
+
     def calculate_score(self, user):
         total = self.questions.count()
         correct = Answer.objects.filter(

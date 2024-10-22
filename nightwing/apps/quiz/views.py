@@ -3,6 +3,7 @@ import contextlib
 import json
 import logging
 import random
+from typing import Any
 
 import google.generativeai as genai
 from django import http
@@ -15,7 +16,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import MultipleChoiceQuestionForm, QuestionForm, QuizForm
-from .models import MultipleChoiceQuestion, Quiz
+from .models import Answer, MultipleChoiceQuestion, Quiz
 
 logger = logging.getLogger(__name__)
 
@@ -183,22 +184,26 @@ def get_question(request, quiz_id: int):
 
     if quiz.finished:
         data: dict[str, str | int] = {"message": "Quiz has finished!"}
-        if request.POST.get("user_id"):
-            user = get_object_or_404(User, id=request.POST["user_id"])
+        if request.POST.get("user"):
+            user = get_object_or_404(User, username=request.POST["user"])
             data["correct"], data["total"] = quiz.calculate_score(user)
         return JsonResponse(data)
 
     question = quiz.questions.get(question_number=quiz.current_question)
-    return JsonResponse(
-        {
-            "question": question.question,
-            "option_a": question.option_a,
-            "option_b": question.option_b,
-            "option_c": question.option_c,
-            "option_d": question.option_d,
-            "id": question.id,
-        }
-    )
+    data: dict[str, Any] = {
+        "question": question.question,
+        "option_a": question.option_a,
+        "option_b": question.option_b,
+        "option_c": question.option_c,
+        "option_d": question.option_d,
+        "id": question.id,
+    }
+    if user_id := request.POST.get("user"):
+        user = get_object_or_404(User, username=user_id)
+        answer = Answer.objects.filter(question=question, user=user).first()
+        if answer is not None:
+            data["correct"] = answer.answer == question.correct_option
+    return JsonResponse(data)
 
 
 @csrf_exempt

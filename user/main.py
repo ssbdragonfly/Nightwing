@@ -48,6 +48,7 @@ class App(ctk.CTk):
         self.title("NightWing")
         self.width_1 = self.winfo_screenwidth()
         self.height_1 = self.winfo_screenheight()
+        self.quizzing = False
         self.name = ""
         self.geometry("400x" + str(self.height_1 - 75) + "+" + str(self.width_1 - 410) + "+0")
         self.start()
@@ -91,6 +92,7 @@ class App(ctk.CTk):
         self.go.place(relx=0.5, rely=0.4, anchor=ctk.CENTER)
 
     def home(self):
+        self.quizzing = False
         self.clear_screen()
         self.start()
 
@@ -115,6 +117,7 @@ class App(ctk.CTk):
             self.quiz_id = jsonified["quiz_id"]
             self.name = name
             print("\tGot quiz id: {self.quiz_id}")
+            self.quizzing = True
             self.render_waiting_screen()
             self.poll_server()
         except Exception:  # Broke :(
@@ -123,6 +126,8 @@ class App(ctk.CTk):
             self.code_entry.focus_set()
 
     def poll_server(self):
+        if not self.quizzing:
+            return
         """Poll the server for a response."""
         print("Polled Server")
         try:
@@ -189,6 +194,8 @@ class App(ctk.CTk):
 
     @pcall
     def submit_answer(self, current_question_id: int):
+        if not self.quizzing:
+            return
         print("Submitted answer")
         default = 26  # Default value for no selection
         if self.radio_var.get() == default:
@@ -217,8 +224,12 @@ class App(ctk.CTk):
             )
             jsonified = response.json()
             if "message" in jsonified:
-                print("QUIZ FINISHED!!")
-                self.render_quiz_finished(jsonified["score"], jsonified["total"])
+                self.quizzing = False
+                correct = jsonified['correct']
+                total = jsonified['total']
+                print((correct,total))
+                self.render_quiz_finished(correct,total)
+                return
 
             elif jsonified["id"] != current_question_id:
                 self.question(jsonified)
@@ -236,7 +247,8 @@ class App(ctk.CTk):
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
 
-    def render_quiz_finished(self, score: str, total: str) -> None:
+    def render_quiz_finished(self, score, total):
+        #print("Finished quiz func reached")
         self.clear_screen()
         self.title_gen()
         self.rendered_name = ctk.CTkLabel(
@@ -244,9 +256,10 @@ class App(ctk.CTk):
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
         self.score = ctk.CTkLabel(
-            self, text=f"You scored {score}/{total}", font=("Calibri", int(0.02 * self.height_1))
+            self, text=f"You scored {score}/{total}", font=("Calibri", int(0.08 * self.height_1))
         )
         self.score.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
+        self.home_button()
 
     def clear_screen(self, whitelist: Sequence = ()) -> None:
         """Clear all widgets from the screen."""

@@ -15,6 +15,7 @@
 import functools
 import tkinter as tk
 import traceback
+import webbrowser
 from collections.abc import Callable, Sequence
 from typing import ParamSpec, TypeVar
 
@@ -247,6 +248,28 @@ class App(ctk.CTk):
         )
         self.rendered_name.place(relx=0.5, rely=0.125, anchor=ctk.CENTER)
 
+    def back_to_home_button(self):
+        self.to_home = ctk.CTkButton(
+            master=self,
+            text="Home",
+            height=15,
+            width=20,
+            command=lambda: self.home(),
+            font=("Calibri", 30, "bold"),
+        )
+        self.to_home.place(relx=0.35, rely=0.5, anchor=ctk.CENTER)
+
+    def to_web_button(self):
+        self.web = ctk.CTkButton(
+            master=self,
+            text="Website",
+            height=15,
+            width=20,
+            command=lambda: webbrowser.open_new_tab("http://127.0.0.1:8000/"),
+            font=("Calibri", 30, "bold"),
+        )
+        self.web.place(relx=0.65, rely=0.5, anchor=ctk.CENTER)
+
     def render_quiz_finished(self, score, total):
         #print("Finished quiz func reached")
         self.clear_screen()
@@ -260,6 +283,8 @@ class App(ctk.CTk):
         )
         self.score.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
         self.home_button()
+        self.to_web_button()
+        self.back_to_home_button()
 
     def clear_screen(self, whitelist: Sequence = ()) -> None:
         """Clear all widgets from the screen."""

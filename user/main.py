@@ -132,7 +132,7 @@ class App(ctk.CTk):
             )
             jsonified = response.json()
             self.question(jsonified)
-            print(f"\tPoll succesful, {jsonified}")
+            print(f"\tPoll successful, {jsonified}")
         except Exception:
             self.after(1000, self.poll_server)  # Poll every 1 second
 
@@ -217,13 +217,14 @@ class App(ctk.CTk):
             )
             jsonified = response.json()
             if "message" in jsonified:
+                print("QUIZ FINISHED!!")
                 self.render_quiz_finished(jsonified["score"], jsonified["total"])
 
             elif jsonified["id"] != current_question_id:
                 self.question(jsonified)
             else:
                 self.after(1000, lambda: self.submit_answer(current_question_id))
-            print("\t Poll recieved {jsonified}")
+            print(f"\t Poll received {jsonified}")
         except Exception:  # noqa: BLE001
             self.after(1000, lambda: self.submit_answer(current_question_id))
 

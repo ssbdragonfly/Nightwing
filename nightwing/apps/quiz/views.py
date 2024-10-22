@@ -202,7 +202,11 @@ def question_results(request, quiz_id, question_number):
 
 @login_required
 def finish_quiz(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz = get_object_or_404(
+        Quiz.objects.annotate(question_count=models.Count("questions")), id=quiz_id
+    )
+    quiz.current_question = quiz.question_count + 1
+    quiz.save(update_fields=["current_question"])
     return render(request, "quiz/finish_quiz.html", {"quiz": quiz})
 
 

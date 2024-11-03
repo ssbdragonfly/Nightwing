@@ -3,11 +3,11 @@ A project to help keep your employees focused during long zoom and real life mee
 
 Devolped by Shaurya Bisht, Aarush Deshpande, and Jacob Percy for the 10th District of Virginia's Congressional App Challenge.
 
-### Demo (Click!)
+## Demo (Click!)
 
 [![Watch the video](https://img.youtube.com/vi/MAMqRrMCMKk/0.jpg)](https://www.youtube.com/watch?v=MAMqRrMCMKk)
 
-### Features
+## Features
 - Real-time interactive quizzes during meetings
 - Multi-choice questions with instant feedback
 - Desktop client for quiz participants
@@ -15,12 +15,12 @@ Devolped by Shaurya Bisht, Aarush Deshpande, and Jacob Percy for the 10th Distri
 - Credit system for engagement
 - Easy-to-use interface for creating and managing quizzes
 
-### Components
+## Components
 - Django web application for quiz management
 - Custom desktop client built with CustomTkinter
 - Store system for credit management
 
-#### Developing
+## Development
 Clone the repo, and install dependencies
 ```
 git clone https://ssbdragonly/CAC24 nightwing

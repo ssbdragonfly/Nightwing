@@ -1,7 +1,7 @@
 ## Nightwing
 A project to help keep your employees focused during long zoom and real life meetings with interactive quizzes!
 
-Devolped by Shaurya Bisht, Aarush Deshpande, and Jacob Percy for the 10th District of Virginia's Congressional App Challenge.
+Devolped by [Shaurya Bisht](https://github.com/ssbdragonfly), [Aarush Deshpande](https://github.com/JasonGrace2282), and [Jacob Percy](https://github.com/JacobPercy/) for the 10th District of Virginia's Congressional App Challenge.
 
 ## Demo (Click!)
 

@@ -15,6 +15,11 @@ Devolped by Shaurya Bisht, Aarush Deshpande, and Jacob Percy for the 10th Distri
 - Credit system for engagement
 - Easy-to-use interface for creating and managing quizzes
 
+## Components
+- Django web application for quiz management
+- Custom desktop client built with CustomTkinter
+- Store system for credit management
+
 #### Developing
 Clone the repo, and install dependencies
 ```
